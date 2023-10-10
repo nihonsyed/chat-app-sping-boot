@@ -57,24 +57,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateById(Long id, UserRequestDto updateDto) throws IllegalAccessException, UserNotFoundException {
 
-        User source=modelMapper.map(updateDto,User.class);
-        User userToBeUpdated=modelMapper.map(findById(id), User.class);
-        modelMapper.mapToUpdate(source,userToBeUpdated);
+        User source = modelMapper.map(updateDto, User.class);
+        User userToBeUpdated = modelMapper.map(findById(id), User.class);
+        modelMapper.mapToUpdate(source, userToBeUpdated);
         repository.save(userToBeUpdated);
     }
 
     @Override
     public void addNewPrivateContactToUser(Long userId, ContactDto contactDto) throws UserNotFoundException, IllegalAccessException {
-        User user=getById(userId);
-        Set<Contact> existingContacts=user.getContacts();
-        PrivateContact newContact=new PrivateContact();
-//         newContact=modelMapper.map(contactDto, PrivateContact.class);
-         modelMapper.mapNonNullFields(contactDto,newContact);
+        User user = getById(userId);
+        Set<Contact> existingContacts = user.getContacts();
+        PrivateContact newContact = new PrivateContact();
+        modelMapper.mapUsingParentClassProperties(contactDto, newContact);
         existingContacts.add(newContact);
         repository.save(user);
     }
 
     private User getById(Long id) throws UserNotFoundException {
-      return repository.findById(id).orElseThrow(UserNotFoundException::new);
+        return repository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 }
