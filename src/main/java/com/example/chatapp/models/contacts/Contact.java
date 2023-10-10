@@ -1,5 +1,7 @@
 package com.example.chatapp.models.contacts;
 
+import com.example.chatapp.custom.exceptions.ContactFullException;
+import com.example.chatapp.custom.exceptions.UserAlreadyInContactException;
 import com.example.chatapp.models.messages.Message;
 import com.example.chatapp.models.messages.TextMessage;
 import com.example.chatapp.models.users.User;
@@ -24,7 +26,7 @@ public abstract class Contact {
     @Column(name = "genaration_time")
     protected Date generatedTime;
 
-    @OneToMany(mappedBy = "contact")
+    @OneToMany(mappedBy = "contact",cascade = CascadeType.ALL)
     protected Set<Message> messages;
 
 
@@ -38,7 +40,14 @@ public abstract class Contact {
 
     }
 
-    public abstract void addMember(User newMember);
+    public void addMember(User newMember) throws ContactFullException, UserAlreadyInContactException
+    {
+        if(members.contains(newMember))
+            throw new UserAlreadyInContactException();
+        members.add(newMember);
+        //todo:?? for unicity
+        newMember.getContacts().add(this);
+    }
 
     //todo:work with admin
 
