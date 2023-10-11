@@ -41,7 +41,7 @@ public class UserController {
 
     @GetMapping(value = "/{id}")
     @Operation(summary = "Get user by ID", description = "Retrieves a user by their unique ID.")
-    public ResponseEntity<Object> findById(@PathVariable("id") Long id) throws UserNotFoundException {
+    public ResponseEntity<Object> findById(@PathVariable("id") @Schema(example = "1") Long id) throws UserNotFoundException, InsufficientContactMemberException {
         UserResponseDto user = userService.findById(id);
         return ResponseEntity.ok(user);
     }

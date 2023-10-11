@@ -13,7 +13,7 @@ public interface UserService {
 
     List<UserResponseDto> findAll() throws NoUserFoundException;
 
-    UserResponseDto findById(Long id) throws UserNotFoundException;
+    UserResponseDto findById(Long id) throws UserNotFoundException, InsufficientContactMemberException;
 
     void deleteById(Long id) throws UserNotFoundException;
 

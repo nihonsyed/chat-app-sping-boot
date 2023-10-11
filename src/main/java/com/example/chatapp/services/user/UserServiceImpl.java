@@ -46,15 +46,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto findById(Long id) throws UserNotFoundException {
+    public UserResponseDto findById(Long id) throws UserNotFoundException, InsufficientContactMemberException {
 
         User foundUser = getById(id);
-        return modelMapper.map(foundUser, UserResponseDto.class);
+        UserResponseDto userResponseDto= modelMapper.map(foundUser, UserResponseDto.class);
+        contactService.setPrivateContactsDefaultNamesForResponse(id,userResponseDto.getContacts());
+        return userResponseDto;
+
+        //todo:set contact name to returnable UserResonseDto
+
+
     }
 
     @Override
     public void deleteById(Long id) throws UserNotFoundException {
-        findById(id);
+        getById(id);
         repository.deleteById(id);
     }
 
@@ -62,7 +68,7 @@ public class UserServiceImpl implements UserService {
     public void updateById(Long id, UserRequestDto updateDto) throws IllegalAccessException, UserNotFoundException {
 
         User source = modelMapper.map(updateDto, User.class);
-        User userToBeUpdated = modelMapper.map(findById(id), User.class);
+        User userToBeUpdated = modelMapper.map(getById(id), User.class);
         modelMapper.mapToUpdate(source, userToBeUpdated);
         repository.save(userToBeUpdated);
     }
@@ -84,7 +90,6 @@ public class UserServiceImpl implements UserService {
         if(messageTypeCode==0)
         {
             TextMessage textMessage=new TextMessage();
-           // TextMessage textMessage=modelMapper.map(addableMessageDto,TextMessage.class);
             modelMapper.mapUsingParentClassProperties(addableMessageDto,textMessage);
             addMessageToContactById(userId,contactId,textMessage);
         }
