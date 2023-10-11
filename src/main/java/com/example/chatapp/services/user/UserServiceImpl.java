@@ -1,21 +1,22 @@
 package com.example.chatapp.services.user;
 
-import com.example.chatapp.custom.exceptions.NoUserFoundException;
-import com.example.chatapp.custom.exceptions.UserNotFoundException;
+import com.example.chatapp.custom.exceptions.*;
 import com.example.chatapp.custom.mappers.CustomModelMapper;
-import com.example.chatapp.dto.contact.ContactDto;
+import com.example.chatapp.dto.message.MessageDto;
 import com.example.chatapp.dto.user.UserRequestDto;
 import com.example.chatapp.dto.user.UserResponseDto;
 import com.example.chatapp.models.contacts.Contact;
 import com.example.chatapp.models.contacts.PrivateContact;
+import com.example.chatapp.models.messages.Message;
+import com.example.chatapp.models.messages.TextMessage;
 import com.example.chatapp.models.users.User;
 import com.example.chatapp.repositories.UserRepository;
+import com.example.chatapp.services.contact.ContactService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional(rollbackOn = Exception.class)
@@ -26,6 +27,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private CustomModelMapper modelMapper;
+
+    @Autowired
+    private ContactService contactService;
 
     @Override
     public void save(UserRequestDto user) {
@@ -44,7 +48,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto findById(Long id) throws UserNotFoundException {
 
-        User foundUser = repository.getById(id);
+        User foundUser = getById(id);
         return modelMapper.map(foundUser, UserResponseDto.class);
     }
 
@@ -64,16 +68,49 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addNewPrivateContactToUser(Long userId, ContactDto contactDto) throws UserNotFoundException, IllegalAccessException {
+    public void addNewPrivateContactToUser(Long userId, Long addableUserId) throws UserNotFoundException, UserAlreadyInContactException, ContactFullException {
         User user = getById(userId);
-        Set<Contact> existingContacts = user.getContacts();
-        PrivateContact newContact = new PrivateContact();
-        modelMapper.mapUsingParentClassProperties(contactDto, newContact);
-        existingContacts.add(newContact);
+        User addableUser=getById(addableUserId);
+        PrivateContact contact=new PrivateContact();
+        user.getContacts().add(contact);
+        addableUser.getContacts().add(contact);
         repository.save(user);
+        repository.save(addableUser);
+    }
+
+    @Override
+    public void addMessageToContactByIdWithMessageType(Long userId, Long contactId, MessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UnauthorizedContactAccessException, ContactNotFound, IllegalAccessException {
+        //todo:implement enum
+        if(messageTypeCode==0)
+        {
+            TextMessage textMessage=new TextMessage();
+           // TextMessage textMessage=modelMapper.map(addableMessageDto,TextMessage.class);
+            modelMapper.mapUsingParentClassProperties(addableMessageDto,textMessage);
+            addMessageToContactById(userId,contactId,textMessage);
+        }
+
+    }
+
+
+
+    private void addMessageToContactById(Long userId, Long contactId, Message addableMessage) throws UserNotFoundException, UnauthorizedContactAccessException, ContactNotFound {
+
+       if(hasContact(userId,contactId))
+       {
+           contactService.addMessageById(addableMessage,contactId);
+       }
+
     }
 
     private User getById(Long id) throws UserNotFoundException {
         return repository.findById(id).orElseThrow(UserNotFoundException::new);
+    }
+
+    private boolean hasContact(Long userId,Long contactId) throws UserNotFoundException, ContactNotFound, UnauthorizedContactAccessException {
+        User user=getById(userId);
+        Contact contact=contactService.findById(contactId);
+        if(!user.getContacts().contains(contact))
+            throw new UnauthorizedContactAccessException();
+        return true;
     }
 }

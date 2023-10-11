@@ -18,11 +18,16 @@ public class PrivateContact extends Contact {
         members = new HashSet<>();
     }
 
+    public PrivateContact(User member1, User member2) throws UserAlreadyInContactException, ContactFullException {
+        this();
+        this.addMember(member1);
+        this.addMember(member2);
+    }
+
     @Override
     public void addMember(User newMember) throws ContactFullException, UserAlreadyInContactException {
         //todo:  enum to store 1
-        if(members.size()>1)
-            throw new ContactFullException();
+        if (members.size() > 1) throw new ContactFullException();
         super.addMember(newMember);
     }
 }

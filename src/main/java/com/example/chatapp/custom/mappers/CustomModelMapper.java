@@ -14,8 +14,9 @@ public class CustomModelMapper extends ModelMapper {
     public CustomModelMapper() {
         super();
     }
+
     //todo:handle exceptions for it
-    public static <S, D> void mapUsingParentClassProperties(S source, D destination) throws IllegalAccessException {
+    public <S, D> void mapUsingParentClassProperties(S source, D destination) throws IllegalAccessException {
 
         Class<?> sourceClass = source.getClass();
         Field[] sourceFields = sourceClass.getDeclaredFields();
@@ -26,7 +27,7 @@ public class CustomModelMapper extends ModelMapper {
                 if (fieldValue != null) {
                     Field destinationField;
                     try {
-                        destinationField = destination.getClass().getDeclaredField(field.getName());
+                        destinationField = destination.getClass().getSuperclass().getDeclaredField(field.getName());
                         destinationField.setAccessible(true);
                         destinationField.set(destination, fieldValue);
                     } catch (NoSuchFieldException e) {

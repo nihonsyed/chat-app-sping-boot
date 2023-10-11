@@ -1,6 +1,8 @@
 package com.example.chatapp.models.messages;
 
 import com.example.chatapp.models.contacts.Contact;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +30,7 @@ public abstract class Message<T> {
     @ManyToOne
     @JoinColumn(name = "contact_id", nullable = false)
     @Setter
+    @JsonBackReference
     private Contact contact;
 
     @Column(name = "content")

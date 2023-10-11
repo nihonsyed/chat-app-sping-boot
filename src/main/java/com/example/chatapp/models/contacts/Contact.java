@@ -5,6 +5,9 @@ import com.example.chatapp.custom.exceptions.UserAlreadyInContactException;
 import com.example.chatapp.models.messages.Message;
 import com.example.chatapp.models.messages.TextMessage;
 import com.example.chatapp.models.users.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -27,17 +30,19 @@ public abstract class Contact {
     protected Date generatedTime;
 
     @OneToMany(mappedBy = "contact",cascade = CascadeType.ALL)
+    @JsonManagedReference
     protected Set<Message> messages;
 
 
 
     @ManyToMany(mappedBy = "contacts")
+    @JsonBackReference
     protected Set<User> members;
 
 
     public void addMessage(Message message)
     {
-
+        messages.add(message);
     }
 
     public void addMember(User newMember) throws ContactFullException, UserAlreadyInContactException

@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class ContactDto {
+public class Contact {
 
     private String name;
     private Date generatedTime;

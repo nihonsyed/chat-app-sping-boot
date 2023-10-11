@@ -1,8 +1,7 @@
 package com.example.chatapp.services.user;
 
-import com.example.chatapp.custom.exceptions.NoUserFoundException;
-import com.example.chatapp.custom.exceptions.UserNotFoundException;
-import com.example.chatapp.dto.contact.ContactDto;
+import com.example.chatapp.custom.exceptions.*;
+import com.example.chatapp.dto.message.MessageDto;
 import com.example.chatapp.dto.user.UserRequestDto;
 import com.example.chatapp.dto.user.UserResponseDto;
 
@@ -20,8 +19,11 @@ public interface UserService {
 
     void updateById(Long id, UserRequestDto updateDto) throws IllegalAccessException, UserNotFoundException;
 
+    void addNewPrivateContactToUser(Long userId, Long addableUserId) throws UserNotFoundException, IllegalAccessException, UserAlreadyInContactException, ContactFullException;
 
-    void addNewPrivateContactToUser(Long userId, ContactDto contactDto) throws UserNotFoundException, IllegalAccessException;
+    void addMessageToContactByIdWithMessageType(Long userId, Long contactId, MessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UnauthorizedContactAccessException, ContactNotFound, IllegalAccessException;
+
+
 
     //todo:implement other functionalities
 

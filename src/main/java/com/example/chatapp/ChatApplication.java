@@ -12,7 +12,7 @@ public class ChatApplication {
     public static void main(String[] args) {
 
         SpringApplication.run(ChatApplication.class, args);
-        log.info("..........Application started..............");
+        log.info("............Application started..............");
 
     }
 
