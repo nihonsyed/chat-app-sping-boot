@@ -1,6 +1,6 @@
 package com.example.chatapp.custom.exception_handlers;
 
-import com.example.chatapp.controllers.UserController;
+import com.example.chatapp.controllers.user.UserController;
 import com.example.chatapp.custom.exceptions.NoUserFoundException;
 import com.example.chatapp.custom.exceptions.UserNotFoundException;
 import org.springframework.core.Ordered;

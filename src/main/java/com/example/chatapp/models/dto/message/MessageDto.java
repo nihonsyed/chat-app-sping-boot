@@ -1,6 +1,6 @@
-package com.example.chatapp.dto.message;
+package com.example.chatapp.models.dto.message;
 
-import com.example.chatapp.models.contacts.Contact;
+import com.example.chatapp.entities.contacts.Contact;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;

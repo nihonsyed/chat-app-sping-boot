@@ -1,14 +1,14 @@
-package com.example.chatapp.models.contacts;
+package com.example.chatapp.entities.contacts;
 
 import com.example.chatapp.custom.exceptions.ContactFullException;
 import com.example.chatapp.custom.exceptions.UserAlreadyInContactException;
-import com.example.chatapp.models.messages.Message;
-import com.example.chatapp.models.messages.TextMessage;
-import com.example.chatapp.models.users.User;
+import com.example.chatapp.entities.messages.Message;
+import com.example.chatapp.entities.users.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 import java.util.Set;
@@ -16,7 +16,9 @@ import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="type", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name="type", discriminatorType = DiscriminatorType.INTEGER)
+@Getter
+@Setter
 public abstract class Contact {
 
     @Id
@@ -39,6 +41,10 @@ public abstract class Contact {
     @JsonBackReference
     protected Set<User> members;
 
+    public Contact()
+    {
+        this.generatedTime=new Date();
+    }
 
     public void addMessage(Message message)
     {

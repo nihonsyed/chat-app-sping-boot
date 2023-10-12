@@ -1,6 +1,6 @@
-package com.example.chatapp.models.users;
+package com.example.chatapp.entities.users;
 
-import com.example.chatapp.models.contacts.Contact;
+import com.example.chatapp.entities.contacts.Contact;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,7 +29,7 @@ public class User {
     private String email;
     private String password;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE,CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.DETACH})
     @JoinTable(name = "user_contact", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "contact_id"))
     @JsonManagedReference
     private Set<Contact> contacts;

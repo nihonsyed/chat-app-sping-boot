@@ -1,7 +1,7 @@
 package com.example.chatapp.custom.exceptions;
 
-public class UnauthorizedContactAccessException extends Exception{
-    public UnauthorizedContactAccessException()
+public class UnauthorizedAccessToContactException extends Exception{
+    public UnauthorizedAccessToContactException()
     {
         //todo:enum
         super("User is not authorized for this contact");

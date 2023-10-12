@@ -1,4 +1,4 @@
-package com.example.chatapp.models.messages;
+package com.example.chatapp.entities.messages;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;

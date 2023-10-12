@@ -5,8 +5,10 @@ package com.example.chatapp.services.contact;
 import com.example.chatapp.custom.exceptions.ContactNotFound;
 import com.example.chatapp.custom.exceptions.InsufficientContactMemberException;
 import com.example.chatapp.custom.exceptions.NoContactFound;
-import com.example.chatapp.models.contacts.Contact;
-import com.example.chatapp.models.messages.Message;
+import com.example.chatapp.entities.contacts.Contact;
+import com.example.chatapp.entities.messages.Message;
+import com.example.chatapp.entities.users.User;
+import com.example.chatapp.models.pojos.message.Sender;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
@@ -18,9 +20,15 @@ public interface ContactService {
 
     Contact findById(Long id) throws ContactNotFound;
 
+    void deleteById(Long id);
+
     void addMessageById(Message message, Long contactId) throws ContactNotFound;
 
     void setPrivateContactsDefaultNamesForResponse(Long userId, @NotNull Set<Contact> contacts) throws InsufficientContactMemberException;
+
+    List<Contact> findByType(String type) throws NoContactFound;
+
+    Contact findPrivateContactByUsers(User user, User searchedUser) throws NoContactFound, ContactNotFound;
 
 
     //todo:rest of the methods

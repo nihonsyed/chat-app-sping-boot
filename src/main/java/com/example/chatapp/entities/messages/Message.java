@@ -1,8 +1,9 @@
-package com.example.chatapp.models.messages;
+package com.example.chatapp.entities.messages;
 
-import com.example.chatapp.models.contacts.Contact;
+import com.example.chatapp.entities.contacts.Contact;
+import com.example.chatapp.models.pojos.message.MessageProcessor;
+import com.example.chatapp.models.pojos.message.Sender;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +38,16 @@ public abstract class Message<T> {
     @Setter
     protected String contentBody;
 
-    //todo:add sender and contact
+    //todo:add sender
+    @Setter
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride( name = "id", column = @Column(name = "sender_id")),
+            @AttributeOverride( name = "name", column = @Column(name = "sender_name"))
+    })
+    private Sender sender;
+
+
 
 
     public Message() {

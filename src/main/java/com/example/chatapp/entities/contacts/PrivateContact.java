@@ -1,8 +1,8 @@
-package com.example.chatapp.models.contacts;
+package com.example.chatapp.entities.contacts;
 
 import com.example.chatapp.custom.exceptions.ContactFullException;
 import com.example.chatapp.custom.exceptions.UserAlreadyInContactException;
-import com.example.chatapp.models.users.User;
+import com.example.chatapp.entities.users.User;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 
@@ -10,7 +10,7 @@ import java.util.HashSet;
 
 @Entity
 //todo:use numeric value as discriminator
-@DiscriminatorValue("private")
+@DiscriminatorValue(value = "0")
 public class PrivateContact extends Contact {
 
 

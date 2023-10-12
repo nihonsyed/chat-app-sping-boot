@@ -1,11 +1,11 @@
-package com.example.chatapp.controllers;
+package com.example.chatapp.controllers.user;
 
-import com.example.chatapp.custom.exceptions.*;
-import com.example.chatapp.dto.message.MessageDto;
-import com.example.chatapp.dto.user.UserRequestDto;
-import com.example.chatapp.dto.user.UserResponseDto;
+import com.example.chatapp.custom.exceptions.InsufficientContactMemberException;
+import com.example.chatapp.custom.exceptions.NoUserFoundException;
+import com.example.chatapp.custom.exceptions.UserNotFoundException;
+import com.example.chatapp.models.dto.user.UserRequestDto;
+import com.example.chatapp.models.dto.user.UserResponseDto;
 import com.example.chatapp.services.user.UserService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,20 +60,5 @@ public class UserController {
         userService.updateById(id,user);
         return new ResponseEntity<>("User with ID " + id + " updated successfully! ", HttpStatus.OK);
     }
-
-   @PatchMapping(value = "{id}/contacts/private/add/{addableUserId}")
-   @Operation(summary = "Add a new contact to a user", description = "Adds a new  private-contact to a user")
-   public ResponseEntity<Object> addNewContactById(@PathVariable("id") @Schema(example = "1") Long userId,
-                                              @PathVariable("addableUserId")  @Schema(example = "2") Long addableUserId) throws UserNotFoundException, IllegalAccessException, UserAlreadyInContactException, ContactFullException {
-       userService.addNewPrivateContactToUser(userId,addableUserId);
-       return new ResponseEntity<>("User with ID " + userId + " updated successfully! ", HttpStatus.OK);
-   }
-
-   @PatchMapping(value = "{id}/contacts/{contactId}/text/send")
-    @Operation(summary = "Send a new message",description = "send a new message to a private or group chat")
-    public ResponseEntity<Object> sendTextMessage(@PathVariable("id")  @Schema(example = "1") Long userId,@PathVariable("contactId")  @Schema(example = "1") Long contactId,@RequestBody MessageDto newMessage) throws UserNotFoundException, UnauthorizedContactAccessException, ContactNotFound, IllegalAccessException {
-       userService.addMessageToContactByIdWithMessageType(userId,contactId,newMessage,0);
-       return new ResponseEntity<>("Message sent successfully!",HttpStatus.CREATED);
-     }
 
 }

@@ -1,6 +1,6 @@
-package com.example.chatapp.dto.contact;
+package com.example.chatapp.models.dto.chat;
 
-import com.example.chatapp.models.messages.Message;
+import com.example.chatapp.entities.messages.Message;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,12 +11,12 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 //todo: ? can it be made abstract
-public class ChatHistoryDto {
+public class ChatDto {
 
     private String chatName;
     private List<Message> messages;
 
-    public ChatHistoryDto(String chatName) {
+    public ChatDto(String chatName) {
         this.chatName = chatName;
     }
 }

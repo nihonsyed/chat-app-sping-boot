@@ -3,10 +3,11 @@ package com.example.chatapp.services.contact;
 import com.example.chatapp.custom.exceptions.ContactNotFound;
 import com.example.chatapp.custom.exceptions.InsufficientContactMemberException;
 import com.example.chatapp.custom.exceptions.NoContactFound;
-import com.example.chatapp.models.contacts.Contact;
-import com.example.chatapp.models.contacts.PrivateContact;
-import com.example.chatapp.models.messages.Message;
-import com.example.chatapp.models.users.User;
+import com.example.chatapp.entities.contacts.Contact;
+import com.example.chatapp.entities.contacts.PrivateContact;
+import com.example.chatapp.entities.messages.Message;
+import com.example.chatapp.entities.users.User;
+import com.example.chatapp.models.pojos.message.Sender;
 import com.example.chatapp.repositories.ContactRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -34,6 +36,12 @@ public class ContactServiceImpl implements ContactService {
     @Override
     public Contact findById(Long id) throws ContactNotFound {
         return repository.findById(id).orElseThrow(ContactNotFound::new);
+
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        repository.deleteById(id);
     }
 
     @Override
@@ -54,12 +62,36 @@ public class ContactServiceImpl implements ContactService {
         }
     }
 
-
-    private void setPrivateContactDefaultNameForUser(Long userId, Contact contact) throws InsufficientContactMemberException {
-        Set<User> members = contact.getMembers();
-        if (members.size() < 2) throw new InsufficientContactMemberException();
-        members.stream().filter(user -> !user.getId().equals(userId)).findFirst().ifPresent(otherUser ->
-                contact.setName(otherUser.getFirstName()));
+    @Override
+    public List<Contact> findByType(String type) throws NoContactFound {
+        List<Contact> contacts=findByType(type);
+        if(Objects.isNull(contacts)||contacts.isEmpty())
+            throw new NoContactFound();
+        return contacts;
     }
+
+    @Override
+    public Contact findPrivateContactByUsers(User user, User searchedUser) throws NoContactFound, ContactNotFound {
+        //todo:enum
+        return findByType("private")
+                .stream()
+                .filter(c -> c.getMembers().containsAll(List.of(user, searchedUser)))
+                .findFirst()
+                .orElseThrow(ContactNotFound::new);
+    }
+
+
+    private void setPrivateContactDefaultNameForUser(Long userId, Contact contact) {
+        Set<User> members = contact.getMembers();
+        members.stream().filter(user -> !user.getId().equals(userId)).findFirst().
+                ifPresentOrElse(otherUser -> contact.setName(otherUser.getFirstName()),
+                () -> {
+                    //todo:enum
+                    contact.setName("Chat Participant");
+                });
+
+        //todo:also add last name
+    }
+
 
 }

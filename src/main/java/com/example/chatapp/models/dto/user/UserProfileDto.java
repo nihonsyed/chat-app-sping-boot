@@ -1,22 +1,21 @@
-package com.example.chatapp.dto.user;
+package com.example.chatapp.models.dto.user;
 
-import com.example.chatapp.models.contacts.Contact;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
-import java.util.Set;
 
 @Getter
 @Setter
-public class UserResponseDto {
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserProfileDto {
     private Long id;
-
     private String firstName;
     private String lastName;
     private Date dateOfBirth;
     private String nationality;
     private String email;
-    private Set<Contact> contacts;
-
 }

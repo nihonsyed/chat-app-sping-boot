@@ -1,7 +1,7 @@
-package com.example.chatapp.dto.contact;
+package com.example.chatapp.models.dto.contact;
 
-import com.example.chatapp.models.messages.Message;
-import com.example.chatapp.models.users.User;
+import com.example.chatapp.entities.messages.Message;
+import com.example.chatapp.entities.users.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class Contact {
+public class ContactDto {
 
     private String name;
     private Date generatedTime;

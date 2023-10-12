@@ -1,8 +1,9 @@
 package com.example.chatapp.custom.exceptions;
 
-public class ContactFullException extends Exception{
-    public ContactFullException()
+public class InsufficientContactMemberException extends Exception{
+    public InsufficientContactMemberException()
     {
-        super("User can't be added to this contact");
+        //todo:enum
+        super("A contact must have atleast 2 members");
     }
 }
