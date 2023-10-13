@@ -3,6 +3,7 @@ package com.example.chatapp.services.user;
 import com.example.chatapp.custom.exceptions.*;
 import com.example.chatapp.entities.contacts.Contact;
 import com.example.chatapp.models.dto.contact.ContactDto;
+import com.example.chatapp.models.dto.contact.PrivateContactResponseDto;
 import com.example.chatapp.models.dto.message.MessageDto;
 import com.example.chatapp.models.dto.user.UserProfileDto;
 import com.example.chatapp.models.dto.user.UserRequestDto;
@@ -31,6 +32,8 @@ public interface UserService {
     UserProfileDto getUserProfile(Long id) throws UserNotFoundException;
 
     ContactDto findPrivateContactByUserIds(Long userId, Long searchedUsersId) throws UserNotFoundException, NoContactFound, ContactNotFound;
+
+    PrivateContactResponseDto getPrivateContactResponseById(Long userId, Long contactId) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound;
 
 
     //todo:implement other functionalities

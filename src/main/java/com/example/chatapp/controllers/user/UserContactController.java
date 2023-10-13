@@ -2,6 +2,7 @@ package com.example.chatapp.controllers.user;
 
 import com.example.chatapp.custom.exceptions.*;
 import com.example.chatapp.models.dto.contact.ContactDto;
+import com.example.chatapp.models.dto.contact.PrivateContactResponseDto;
 import com.example.chatapp.models.dto.message.MessageDto;
 import com.example.chatapp.models.dto.user.UserProfileDto;
 import com.example.chatapp.services.user.UserService;
@@ -54,5 +55,16 @@ public class UserContactController {
         ContactDto privateContact= userService.findPrivateContactByUserIds(userId,searchedUsersId);
         return ResponseEntity.ok(privateContact);
     }
+
+    @GetMapping(value = "{id}/contacts/private/{contactId}")
+    @Operation(summary = "Get a private contact by ID", description = "Retrieves a private contact by its unique ID.")
+    public ResponseEntity<Object> getPrivateContactResponseById(
+            @PathVariable("id") @Schema(example = "1") Long userId,
+            @PathVariable("contactId") @Schema(example = "1") Long contactId
+    ) throws ContactNotFound, UserNotFoundException, UnauthorizedAccessToContactException {
+        PrivateContactResponseDto privateContactResponse = userService.getPrivateContactResponseById(userId, contactId);
+        return ResponseEntity.ok(privateContactResponse);
+    }
+
 
 }
