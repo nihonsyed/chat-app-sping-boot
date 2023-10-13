@@ -8,7 +8,7 @@ import com.example.chatapp.custom.exceptions.NoContactFound;
 import com.example.chatapp.entities.contacts.Contact;
 import com.example.chatapp.entities.messages.Message;
 import com.example.chatapp.entities.users.User;
-import com.example.chatapp.models.pojos.message.Sender;
+import com.example.chatapp.models.dto.contact.PrivateContactResponseDto;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
@@ -29,6 +29,8 @@ public interface ContactService {
     List<Contact> findByType(String type) throws NoContactFound;
 
     Contact findPrivateContactByUsers(User user, User searchedUser) throws NoContactFound, ContactNotFound;
+
+    PrivateContactResponseDto getPrivateContactResponseById(Long userId,Long contactId) throws ContactNotFound;
 
 
     //todo:rest of the methods

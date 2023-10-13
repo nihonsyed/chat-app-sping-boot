@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE+1)
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionsHandler extends ResponseEntityExceptionHandler {
 
 
     @ExceptionHandler(value = Exception.class)

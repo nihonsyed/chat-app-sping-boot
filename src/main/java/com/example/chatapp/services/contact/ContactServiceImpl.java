@@ -3,11 +3,13 @@ package com.example.chatapp.services.contact;
 import com.example.chatapp.custom.exceptions.ContactNotFound;
 import com.example.chatapp.custom.exceptions.InsufficientContactMemberException;
 import com.example.chatapp.custom.exceptions.NoContactFound;
+import com.example.chatapp.custom.mappers.CustomModelMapper;
 import com.example.chatapp.entities.contacts.Contact;
 import com.example.chatapp.entities.contacts.PrivateContact;
 import com.example.chatapp.entities.messages.Message;
 import com.example.chatapp.entities.users.User;
-import com.example.chatapp.models.pojos.message.Sender;
+import com.example.chatapp.models.dto.contact.ContactResponseDto;
+import com.example.chatapp.models.dto.contact.PrivateContactResponseDto;
 import com.example.chatapp.repositories.ContactRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +27,9 @@ public class ContactServiceImpl implements ContactService {
 
     @Autowired
     private ContactRepository repository;
+
+    @Autowired
+    private CustomModelMapper modelMapper;
 
     @Override
     public List<Contact> findAll() throws NoContactFound {
@@ -64,8 +69,8 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public List<Contact> findByType(String type) throws NoContactFound {
-        List<Contact> contacts=findByType(type);
-        if(Objects.isNull(contacts)||contacts.isEmpty())
+        List<Contact> contacts = findByType(type);
+        if (Objects.isNull(contacts) || contacts.isEmpty())
             throw new NoContactFound();
         return contacts;
     }
@@ -80,7 +85,22 @@ public class ContactServiceImpl implements ContactService {
                 .orElseThrow(ContactNotFound::new);
     }
 
+    @Override
+    public PrivateContactResponseDto getPrivateContactResponseById(Long userId,Long contactId) throws ContactNotFound {
+        Contact contact=findById(contactId);
+       setPrivateContactDefaultNameForUser(userId,contact);
+        return modelMapper.map(contact,PrivateContactResponseDto.class);
+    }
 
+    //todo:for group contact response
+
+    //set nickname for private-contat & setting chat name for group chat
+    public void updateNameById(Long checkableAdminId,Long contactId,String newName) throws ContactNotFound {
+        //todo:authorize only group chat admins
+        Contact contact=findById(contactId);
+        contact.setName(newName);
+        repository.save(contact);
+    }
     private void setPrivateContactDefaultNameForUser(Long userId, Contact contact) {
         Set<User> members = contact.getMembers();
         members.stream().filter(user -> !user.getId().equals(userId)).findFirst().

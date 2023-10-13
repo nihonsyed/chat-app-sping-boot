@@ -14,7 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 
 @ControllerAdvice(assignableTypes = UserController.class)
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class UserExceptionsHandler extends GlobalExceptionHandler{
+public class UserExceptionsHandler extends GlobalExceptionsHandler {
 
     @ExceptionHandler(value = NoUserFoundException.class)
     public ResponseEntity<Object> handleNoUserFoundException(NoUserFoundException exception, WebRequest request)
