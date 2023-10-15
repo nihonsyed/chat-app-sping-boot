@@ -4,7 +4,7 @@ import com.example.chatapp.custom.exceptions.*;
 import com.example.chatapp.models.dto.contact.PrivateContactResponseDto;
 import com.example.chatapp.models.dto.message.SendingMessageDto;
 import com.example.chatapp.services.contact.ContactService;
-import com.example.chatapp.services.user.UserServiceImpl;
+import com.example.chatapp.services.user.TestingUserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,18 +16,18 @@ import java.util.Set;
 
 
 @RestController
-@RequestMapping(value = "/users")
-public class UserContactController {
+@RequestMapping(value = "/testing-users")
+public class TestingUserContactController {
 
     @Autowired
-    private UserServiceImpl userService;
+    private TestingUserServiceImpl userService;
 
     @Autowired
     private ContactService contactService;
 
     @PatchMapping(value = "{id}/contacts/private/add/{addableUserId}")
     @Operation(summary = "Make a privte-contact between two users", description = "Adds a new  private-contact to a user")
-    public ResponseEntity<Object> makePrivateContact(@PathVariable("id") @Schema(example = "1", description = "requesting user's id") Long requestingUsersId, @PathVariable("addableUserId") @Schema(example = "2", description = "addable user's id") Long addableUserId) throws UserNotFoundException, IllegalAccessException, UserAlreadyInContactException, ContactFullException, SameUserException, InsufficientContactMemberException {
+    public ResponseEntity<Object> makePrivateContact(@PathVariable("id") @Schema(example = "1", description = "requesting user's id") Long requestingUsersId, @PathVariable("addableUserId") @Schema(example = "2", description = "addable user's id") Long addableUserId) throws UserNotFoundException,  UserAlreadyInContactException, SameUserException, InsufficientContactMemberException {
         userService.makePrivateContact(requestingUsersId, addableUserId);
         return new ResponseEntity<>("User with ID " + addableUserId + " has been added!", HttpStatus.OK);
     }
@@ -58,7 +58,7 @@ public class UserContactController {
 
     @PatchMapping(value = "{id}/contacts/group/add")
     @Operation(summary = "Make a new group contact", description = "a group contact")
-    public ResponseEntity<Object> makeGroupContact(@PathVariable("id") @Schema(example = "1") Long requestingUserId, @RequestBody Set<Long> addableUserIds) throws UserNotFoundException, UserAlreadyInContactException, ContactFullException, InsufficientContactMemberException {
+    public ResponseEntity<Object> makeGroupContact(@PathVariable("id") @Schema(example = "1") Long requestingUserId, @RequestBody Set<Long> addableUserIds) throws UserNotFoundException, InsufficientContactMemberException {
         userService.makeGroupContact(requestingUserId, addableUserIds);
         return new ResponseEntity<>("Group has successfully been made " + requestingUserId, HttpStatus.OK);
     }
@@ -72,7 +72,7 @@ public class UserContactController {
 
     @PatchMapping(value = "{id}/contacts/group/{groupContactId}/makeAdmin/{newAdminId}")
     @Operation(summary = "Make a user admin in a group contact", description = "Makes a user an admin in a group contact")
-    public ResponseEntity<Object> makeAdminInGroupContact(@PathVariable("id") @Schema(example = "1") Long userId, @PathVariable("newAdminId") @Schema(example = "5") Long newAdminId, @PathVariable("groupContactId") @Schema(example = "3") Long groupContactId) throws UserNotFoundException, ContactNotFound, UnauthorizedAccessToContactException, ContactFullException, IllegalContactOperation, UserAlreadyAdminInGroupContactException, SameUserException {
+    public ResponseEntity<Object> makeAdminInGroupContact(@PathVariable("id") @Schema(example = "1") Long userId, @PathVariable("newAdminId") @Schema(example = "5") Long newAdminId, @PathVariable("groupContactId") @Schema(example = "3") Long groupContactId) throws UserNotFoundException, ContactNotFound, UnauthorizedAccessToContactException, IllegalContactOperation, UserAlreadyAdminInGroupContactException, SameUserException {
         userService.makeAdmin(userId, newAdminId, groupContactId);
         return new ResponseEntity<>("User with ID " + newAdminId + " made admin in the group contact with ID " + groupContactId, HttpStatus.OK);
     }

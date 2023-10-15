@@ -44,7 +44,7 @@ public class ContactController {
     }
     //for testing
     @GetMapping(value = "{userId}/response/{id}")
-    @Operation(summary = "Get contact response by ID", description = "Retrieves a contact response by its unique ID.")
+    @Operation(summary = "Get contact-response by ID", description = "Retrieves a contact-response by its unique ID.")
     public ResponseEntity<Object> getContactResponseById(
             @PathVariable("userId") @Schema(example = "1") Long userId
             ,@PathVariable("id") @Schema(example = "1") Long contactId) throws ContactNotFound {

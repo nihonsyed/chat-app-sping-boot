@@ -1,15 +1,15 @@
 package com.example.chatapp.models.dto.user;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
-public class GroupContactMemberDto extends PrivateContactMemberDto {
+public class GroupContactMemberDto extends ContactMemberDto {
 
     private boolean isAdmin;
 
-    public GroupContactMemberDto() {
+    //todo:setting true if admin
+    public void setIsAdmin()
+    {
 
     }
 

@@ -6,4 +6,9 @@ public class UnauthorizedAccessToContactException extends Exception{
         //todo:enum
         super("User is not authorized for this contact");
     }
+    public UnauthorizedAccessToContactException(String message)
+    {
+
+        super(message);
+    }
 }

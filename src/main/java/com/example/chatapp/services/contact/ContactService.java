@@ -16,13 +16,14 @@ import java.util.Set;
 
 public interface ContactService {
 
+
     List<Contact> findAll() throws NoContactFound;
 
     Contact findById(Long id) throws ContactNotFound;
 
     void deleteById(Long id);
 
-    void addMessageById(Message message, Long contactId) throws ContactNotFound;
+    void addMessageToContactById(Message message, User user, Long contactId) throws ContactNotFound;
 
     void setPrivateContactsDefaultNamesForResponse(Long userId, @NotNull Set<Contact> contacts) throws InsufficientContactMemberException;
 
@@ -31,6 +32,8 @@ public interface ContactService {
     Contact findPrivateContactByUsers(User user, User searchedUser) throws NoContactFound, ContactNotFound;
 
     PrivateContactResponseDto getPrivateContactResponseById(Long userId,Long contactId) throws ContactNotFound;
+
+
 
 
     //todo:rest of the methods
