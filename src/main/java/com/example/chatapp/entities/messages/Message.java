@@ -17,6 +17,9 @@ import java.util.Date;
 @Getter
 public abstract class Message {
 
+    @Column(name = "content")
+    @Setter
+    protected String contentBody;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,31 +31,16 @@ public abstract class Message {
     @Setter
     @Column(name = "sent_time")
     private Date sentTime;
-
     @ManyToOne
     @JoinColumn(name = "contact_id", nullable = false)
     @Setter
     @JsonBackReference
     private Contact contact;
-
-    @Column(name = "content")
+    @ManyToOne
+    @JoinColumn(name = "sender_id")
     @Setter
-    protected String contentBody;
-
-    //todo:add sender
-//    @Setter
-//    @Embedded
-//    @AttributeOverrides({
-//            @AttributeOverride( name = "id", column = @Column(name = "sender_id")),
-//            @AttributeOverride( name = "name", column = @Column(name = "sender_name"))
-//    })
-//    private Sender sender;
-
-   @ManyToOne
-   @JoinColumn(name = "sender_id")
-   @Setter
-   @JsonBackReference
-   private User sender;
+    @JsonBackReference
+    private User sender;
 
 
     public Message() {

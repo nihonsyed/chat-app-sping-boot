@@ -9,7 +9,7 @@ import com.example.chatapp.repositories.ContactRepository;
 
 import java.util.Set;
 
-public interface TestingContactService {
+public interface UserContactService {
 
    <T> void  makeContact(User requestingUser, T addableUser) throws InsufficientContactMemberException, UserNotFoundException, UserAlreadyInContactException;
     void leaveContact(User user, Long contactId) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, NoContactFound;
@@ -52,7 +52,8 @@ public interface TestingContactService {
 
         if(contact.getMembers().isEmpty())
              repository.delete(contact);
-        // repository.save(contact);
+        else
+          repository.save(contact);
     }
 
 

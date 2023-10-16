@@ -10,10 +10,8 @@ import com.example.chatapp.services.message.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-
 @Service("private")
-public class TestingPrivateContactService implements TestingContactService{
+public class UserPrivateContactService implements UserContactService {
 
     @Autowired
     private ContactRepository repository;
@@ -36,6 +34,8 @@ public class TestingPrivateContactService implements TestingContactService{
                 PrivateContact contact=new PrivateContact();
                 contact.getMembers().add(addingUser);
                 contact.getMembers().add(requestingUser);
+                addingUser.getContacts().add(contact);
+                requestingUser.getContacts().add(contact);
                 repository.save(contact);
 
             }

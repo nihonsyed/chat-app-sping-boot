@@ -16,7 +16,7 @@ import java.util.Set;
 
 
 @Service("group")
-public class TestingGroupContactService implements TestingContactService{
+public class UserGroupContactService implements UserContactService {
 
 
     @Autowired
@@ -80,7 +80,8 @@ public class TestingGroupContactService implements TestingContactService{
             if (admins.contains(newAdmin))
                 throw new UserAlreadyAdminInGroupContactException();
             else
-                admins.add(newAdmin);
+              { admins.add(newAdmin);
+                repository.save(contact);}
 
         }
     }

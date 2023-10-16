@@ -1,6 +1,7 @@
 package com.example.chatapp.custom.exception_handlers;
 
-import com.example.chatapp.controllers.user.UserContactController;
+import com.example.chatapp.controllers.user.TestingUserContactController;
+import com.example.chatapp.controllers.user.TestingUserController;
 import com.example.chatapp.controllers.user.UserController;
 import com.example.chatapp.custom.exceptions.NoUserFoundException;
 import com.example.chatapp.custom.exceptions.UserNotFoundException;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-@ControllerAdvice(assignableTypes = {UserController.class, UserContactController.class})
+@ControllerAdvice(assignableTypes = {UserController.class, TestingUserController.class, TestingUserContactController.class})
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class UserExceptionsHandler extends GlobalExceptionsHandler {
 
