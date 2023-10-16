@@ -11,5 +11,5 @@ public class PrivateContactResponseDto extends ContactResponseDto {
 
     @Getter
     @Setter
-    Set<PrivateContactMemberDto> members;
+    private Set<PrivateContactMemberDto> members;
 }

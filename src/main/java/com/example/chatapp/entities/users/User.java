@@ -2,6 +2,7 @@ package com.example.chatapp.entities.users;
 
 import com.example.chatapp.entities.contacts.Contact;
 import com.example.chatapp.entities.contacts.GroupContact;
+import com.example.chatapp.entities.messages.Message;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -40,6 +41,14 @@ public class User {
     @ManyToMany(mappedBy = "admins")
     @JsonIgnore
     private Set<GroupContact> adminOfGroups = new HashSet<>();
+
+
+    @OneToMany(mappedBy = "sender",
+            cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.REMOVE,CascadeType.REFRESH}
+
+    )
+    private Set<Message> sentMessages=new HashSet<>();
+
 
 
 

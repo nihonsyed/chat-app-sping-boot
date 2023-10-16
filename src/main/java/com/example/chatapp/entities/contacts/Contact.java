@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -33,13 +34,13 @@ public abstract class Contact {
 
     @OneToMany(mappedBy = "contact",cascade = CascadeType.ALL)
     @JsonManagedReference
-    protected Set<Message> messages;
+    protected Set<Message> messages=new HashSet<>();
 
 
 
-    @ManyToMany(mappedBy = "contacts")
+    @ManyToMany(mappedBy = "contacts",cascade = CascadeType.ALL)
     @JsonBackReference
-    protected Set<User> members;
+    protected Set<User> members=new HashSet<>();
 
     public Contact()
     {

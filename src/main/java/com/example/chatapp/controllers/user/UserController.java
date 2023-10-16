@@ -3,12 +3,15 @@ package com.example.chatapp.controllers.user;
 import com.example.chatapp.custom.exceptions.InsufficientContactMemberException;
 import com.example.chatapp.custom.exceptions.NoUserFoundException;
 import com.example.chatapp.custom.exceptions.UserNotFoundException;
+import com.example.chatapp.models.dto.user.UserProfileDto;
 import com.example.chatapp.models.dto.user.UserRequestDto;
 import com.example.chatapp.models.dto.user.UserResponseDto;
 import com.example.chatapp.services.user.UserService;
+import com.example.chatapp.services.user.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +26,7 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @PostMapping(value = "/register")
     @Operation(summary = "Register a new user", description = "Creates a new user account.")
@@ -59,6 +62,13 @@ public class UserController {
                                         @RequestBody UserRequestDto user) throws UserNotFoundException, IllegalAccessException {
         userService.updateById(id,user);
         return new ResponseEntity<>("User with ID " + id + " updated successfully! ", HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/profile/{id}")
+    @Operation(summary = "Get user profile by ID", description = "Retrieves a user's profile by their unique ID.")
+    public ResponseEntity<Object> getUserProfile(@PathVariable("id") @Schema(example = "1") Long id) throws UserNotFoundException {
+        UserProfileDto userProfile = userService.getUserProfile(id);
+        return ResponseEntity.ok(userProfile);
     }
 
 }

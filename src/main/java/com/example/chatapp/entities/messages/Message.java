@@ -1,6 +1,7 @@
 package com.example.chatapp.entities.messages;
 
 import com.example.chatapp.entities.contacts.Contact;
+import com.example.chatapp.entities.users.User;
 import com.example.chatapp.models.pojos.message.MessageProcessor;
 import com.example.chatapp.models.pojos.message.Sender;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -14,7 +15,7 @@ import java.util.Date;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @Getter
-public abstract class Message<T> {
+public abstract class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,22 +40,26 @@ public abstract class Message<T> {
     protected String contentBody;
 
     //todo:add sender
-    @Setter
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride( name = "id", column = @Column(name = "sender_id")),
-            @AttributeOverride( name = "name", column = @Column(name = "sender_name"))
-    })
-    private Sender sender;
+//    @Setter
+//    @Embedded
+//    @AttributeOverrides({
+//            @AttributeOverride( name = "id", column = @Column(name = "sender_id")),
+//            @AttributeOverride( name = "name", column = @Column(name = "sender_name"))
+//    })
+//    private Sender sender;
 
-
+   @ManyToOne
+   @JoinColumn(name = "sender_id")
+   @Setter
+   @JsonBackReference
+   private User sender;
 
 
     public Message() {
         this.deliveryTime = new Date();
     }
 
-    public abstract T getContent();
+    public abstract <T> T getContent();
 
 
 }

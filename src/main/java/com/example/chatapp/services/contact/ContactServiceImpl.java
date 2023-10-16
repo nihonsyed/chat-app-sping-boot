@@ -5,11 +5,15 @@ import com.example.chatapp.custom.exceptions.InsufficientContactMemberException;
 import com.example.chatapp.custom.exceptions.NoContactFound;
 import com.example.chatapp.custom.mappers.CustomModelMapper;
 import com.example.chatapp.entities.contacts.Contact;
+import com.example.chatapp.entities.contacts.GroupContact;
 import com.example.chatapp.entities.contacts.PrivateContact;
 import com.example.chatapp.entities.messages.Message;
 import com.example.chatapp.entities.users.User;
 import com.example.chatapp.models.dto.contact.ContactResponseDto;
+import com.example.chatapp.models.dto.contact.GroupContactResponseDto;
 import com.example.chatapp.models.dto.contact.PrivateContactResponseDto;
+import com.example.chatapp.models.dto.message.MessageInContactResponseDto;
+import com.example.chatapp.models.dto.user.PrivateContactMemberDto;
 import com.example.chatapp.repositories.ContactRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
@@ -50,12 +54,15 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public void addMessageById(Message message, Long contactId) throws ContactNotFound {
+    public void addMessageToContactById(Message message, User user, Long contactId) throws ContactNotFound {
         Contact contact = findById(contactId);
         contact.addMessage(message);
         message.setContact(contact);
+        message.setSender(user);
         repository.save(contact);
     }
+
+
 
     @Override
     public void setPrivateContactsDefaultNamesForResponse(Long userId, @NotNull Set<Contact> contacts) throws InsufficientContactMemberException {
@@ -88,8 +95,12 @@ public class ContactServiceImpl implements ContactService {
     @Override
     public PrivateContactResponseDto getPrivateContactResponseById(Long userId,Long contactId) throws ContactNotFound {
         Contact contact=findById(contactId);
+
        setPrivateContactDefaultNameForUser(userId,contact);
-        return modelMapper.map(contact,PrivateContactResponseDto.class);
+       modelMapper.typeMap(User.class, PrivateContactMemberDto.class);
+       modelMapper.typeMap(Message.class, MessageInContactResponseDto.class);
+       return modelMapper.map(contact,PrivateContactResponseDto.class);
+
     }
 
     //todo:for group contact response
@@ -102,15 +113,21 @@ public class ContactServiceImpl implements ContactService {
         repository.save(contact);
     }
     private void setPrivateContactDefaultNameForUser(Long userId, Contact contact) {
-        Set<User> members = contact.getMembers();
-        members.stream().filter(user -> !user.getId().equals(userId)).findFirst().
-                ifPresentOrElse(otherUser -> contact.setName(otherUser.getFirstName()),
-                () -> {
-                    //todo:enum
-                    contact.setName("Chat Participant");
-                });
+        if (contact instanceof PrivateContact) {
+            Set<User> members = contact.getMembers();
+            members.stream().filter(user -> !user.getId().equals(userId)).findFirst().
+                    ifPresentOrElse(otherUser -> contact.setName(otherUser.getFirstName()),
+                            () -> {
+                                //todo:enum
+                                contact.setName("Chat Participant");
+                            });
 
-        //todo:also add last name
+            //todo:also add last name
+        }
+        else
+        {   //todo:set group name
+            contact.setName("Group chat");
+        }
     }
 
 

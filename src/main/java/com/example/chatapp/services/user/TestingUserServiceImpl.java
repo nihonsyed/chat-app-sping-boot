@@ -2,30 +2,34 @@ package com.example.chatapp.services.user;
 
 import com.example.chatapp.custom.exceptions.*;
 import com.example.chatapp.custom.mappers.CustomModelMapper;
-import com.example.chatapp.entities.contacts.GroupContact;
-import com.example.chatapp.models.dto.contact.ContactDto;
-import com.example.chatapp.models.dto.message.SendingMessageDto;
-import com.example.chatapp.models.dto.user.UserProfileDto;
-import com.example.chatapp.models.dto.user.UserRequestDto;
-import com.example.chatapp.models.dto.user.UserResponseDto;
 import com.example.chatapp.entities.contacts.Contact;
+import com.example.chatapp.entities.contacts.GroupContact;
 import com.example.chatapp.entities.contacts.PrivateContact;
 import com.example.chatapp.entities.messages.Message;
 import com.example.chatapp.entities.messages.TextMessage;
 import com.example.chatapp.entities.users.User;
+import com.example.chatapp.models.dto.message.SendingMessageDto;
+import com.example.chatapp.models.dto.user.UserProfileDto;
+import com.example.chatapp.models.dto.user.UserRequestDto;
+import com.example.chatapp.models.dto.user.UserResponseDto;
 import com.example.chatapp.repositories.UserRepository;
 import com.example.chatapp.services.contact.ContactService;
+import com.example.chatapp.services.contact.TestingContactService;
+import com.example.chatapp.services.contact.TestingGroupContactService;
+import com.example.chatapp.services.contact.TestingPrivateContactService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-@Service("original")
+@Service
 @Transactional(rollbackOn = Exception.class)
-public class UserServiceImpl implements UserService {
+public class TestingUserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository repository;
@@ -35,6 +39,13 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ContactService contactService;
+
+
+    @Autowired
+    private TestingPrivateContactService privateContactService;
+
+    @Autowired
+    private TestingGroupContactService groupContactService;
 
     @Override
     public void save(UserRequestDto user) {
@@ -78,31 +89,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void makePrivateContact(Long requestingUsersId, Long addableUserId) throws UserNotFoundException, UserAlreadyInContactException, SameUserException {
+    public void makePrivateContact(Long requestingUsersId, Long addableUserId) throws UserNotFoundException, UserAlreadyInContactException, SameUserException, InsufficientContactMemberException {
         if (requestingUsersId.equals(addableUserId)) throw new SameUserException();
         User user = getById(requestingUsersId);
         User addableUser = getById(addableUserId);
-        if (hasPrivateContact(user, addableUser)) throw new UserAlreadyInContactException();
-        else {
-            PrivateContact contact = new PrivateContact();
-            user.getContacts().add(contact);
-            addableUser.getContacts().add(contact);
-            repository.save(user);
-            repository.save(addableUser);
-        }
+        privateContactService.makeContact(user,addableUser);
     }
 
     @Override
-    public void addUserToExistingGroupContact(Long userId, Long addableUserId, Long groupContactId) throws UserNotFoundException, ContactNotFound, UnauthorizedAccessToContactException, UserAlreadyInContactException, IllegalContactOperation, SameUserException {
+    public void addUserToExistingGroupContact(Long userId, Long addableUserId, Long groupContactId) throws UserNotFoundException, ContactNotFound, UnauthorizedAccessToContactException, UserAlreadyInContactException, IllegalContactOperation, SameUserException, ContactFullException {
         if(userId.equals(addableUserId)) throw new SameUserException();
         User user = getById(userId);
         User addableUser = getById(addableUserId);
-        Contact contact = contactService.findById(groupContactId);
-        if (!(contact instanceof GroupContact)) throw new IllegalContactOperation();
-        if (isAdmin(user, (GroupContact) contact) && isContactMember(user, contact)) {
-            if (!addableUser.getContacts().add(contact)) throw new UserAlreadyInContactException();
-            repository.save(addableUser);
-        }
+        groupContactService.addMember(user,addableUser,groupContactId);
 
     }
 
@@ -111,34 +110,16 @@ public class UserServiceImpl implements UserService {
         if(userId.equals(newAdminId)) throw new SameUserException();
         User user = getById(userId);
         User newAdmin = getById(newAdminId);
-        Contact contact = contactService.findById(groupContactId);
-        if (!(contact instanceof GroupContact)) throw new IllegalContactOperation();
-        if (isAdmin(user, (GroupContact) contact) && isContactMember(user, contact)) {
-            Set<User> admins=((GroupContact) contact).getAdmins();
-            if (admins.contains(newAdmin))
-                throw new UserAlreadyAdminInGroupContactException();
-            else
-                admins.add(newAdmin);
+        groupContactService.makeAdmin(user,newAdmin,groupContactId);
 
-        }
 
     }
 
     @Override
-    public void removeFromGroupContact(Long userId, Long removeableUserId, Long groupContactId) throws UserNotFoundException, ContactNotFound, ContactFullException, IllegalContactOperation, UnauthorizedAccessToContactException {
+    public void removeFromGroupContact(Long userId, Long removeableUserId, Long groupContactId) throws UserNotFoundException, ContactNotFound, ContactFullException, IllegalContactOperation, UnauthorizedAccessToContactException, UserNotFoundInContactException {
         User user = getById(userId);
         User removeableUser = getById(removeableUserId);
-        Contact contact = contactService.findById(groupContactId);
-        if (!(contact instanceof GroupContact)) throw new ContactFullException();
-        if (isAdmin(user, (GroupContact) contact) && isContactMember(user, contact)) {
-            //todo:throw exception if it isn't found
-            ((GroupContact) contact).getAdmins().remove(removeableUser);
-            if (!removeableUser.getContacts().remove(contact))
-                //todo:enum
-                throw new UnauthorizedAccessToContactException("User doesn't belong to this contact!");
-            repository.save(removeableUser);
-
-        }
+        groupContactService.removeMember(user,removeableUser,groupContactId);
     }
 
     @Override
@@ -147,26 +128,24 @@ public class UserServiceImpl implements UserService {
         addableUserIds.remove(userId);
         if (Objects.isNull(addableUserIds) || addableUserIds.isEmpty()) throw new InsufficientContactMemberException();
         User user = getById(userId);
-        GroupContact contact = new GroupContact();
-        user.getContacts().add(contact);
-        contact.getAdmins().add(user);
-        for (Long id : addableUserIds) {
-            User addableUser = getById(id);
-            addableUser.getContacts().add(contact);
-            repository.save(addableUser);
+        Set<User> addableUsers=new HashSet<>();
+
+        for(Long id:addableUserIds)
+        {
+            User addableUser=getById(id);
+            addableUsers.add(addableUser);
+
         }
-        repository.save(user);
+        groupContactService.makeContact(user,addableUsers);
     }
 
     @Override
     public void addMessageToContactByIdWithMessageType(Long userId, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, IllegalAccessException {
         //todo:implement enum
-        if (messageTypeCode == 0) {
+
             User user = getById(userId);
-            TextMessage textMessage = new TextMessage();
-            modelMapper.mapUsingParentClassProperties(addableMessageDto, textMessage);
-            addMessageToContactById(user, contactId, textMessage);
-        }
+            privateContactService.addMessage(user,contactId,addableMessageDto,messageTypeCode);
+
 
     }
 
@@ -176,14 +155,7 @@ public class UserServiceImpl implements UserService {
         //todo:enum for storing 1 & 2
         //todo:
         User user = getById(userId);
-        Contact contact = contactService.findById(contactId);
-        Set<Contact> userContacts = user.getContacts();
-        if (Objects.isNull(userContacts) || userContacts.isEmpty()) throw new UserHasNoContactException();
-        if (isContactMember(user, contact)) {
-            userContacts.remove(contact);
-            if (contact.getMembers().size() < 2) contactService.deleteById(contactId);
-            repository.save(user);
-        }
+        groupContactService.leaveContact(user,contactId);
     }
 
     @Override

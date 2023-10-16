@@ -9,14 +9,11 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class MessageDto {
+public class SendingMessageDto {
 
-    @Schema(example = "1990-01-01",description = "Delivery time of the message")
-    private Date deliveryTime;
+
     @Schema(example = "delivered",description = "Status of message (delivered/sent/failed)")
     private String status;
-    private Date sentTime;
-    private Contact contact;
     @Schema(example = "Hi,there!",description = "Main content of the message")
     private String contentBody;
 }

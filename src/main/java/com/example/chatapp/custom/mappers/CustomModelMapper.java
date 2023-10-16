@@ -1,5 +1,8 @@
 package com.example.chatapp.custom.mappers;
 
+import com.example.chatapp.entities.contacts.Contact;
+import com.example.chatapp.entities.messages.Message;
+import com.example.chatapp.models.dto.contact.ContactResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 
@@ -55,6 +58,9 @@ public class CustomModelMapper extends ModelMapper {
 
         }
     }
+
+
+
 
 
 }
