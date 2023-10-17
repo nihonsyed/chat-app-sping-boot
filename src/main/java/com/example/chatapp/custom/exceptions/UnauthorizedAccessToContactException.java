@@ -8,7 +8,6 @@ public class UnauthorizedAccessToContactException extends Exception{
     }
     public UnauthorizedAccessToContactException(String message)
     {
-
         super(message);
     }
 }

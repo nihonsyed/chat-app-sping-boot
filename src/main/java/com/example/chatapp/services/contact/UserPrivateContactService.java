@@ -57,7 +57,7 @@ public class UserPrivateContactService implements UserContactService {
     }
 
     @Override
-    public void addMessage(User user, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, IllegalAccessException {
+    public void addMessage(User user, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, IllegalAccessException, MessageSendingFailureException {
         Contact contact=findById(contactId);
         if(!contact.getMembers().contains(user))
             throw  new UnauthorizedAccessToContactException();

@@ -75,7 +75,7 @@ public class UserContactServiceImpl implements UserContactSerivce {
     }
 
     @Override
-    public void sendMessage(Long userId, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, IllegalAccessException {
+    public void sendMessage(Long userId, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, IllegalAccessException, MessageSendingFailureException {
 
         User user = getById(repository,userId);
         privateContactService.addMessage(user,contactId,addableMessageDto,messageTypeCode);

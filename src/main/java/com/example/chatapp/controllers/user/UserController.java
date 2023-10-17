@@ -21,7 +21,7 @@ import java.util.List;
 
 //todo:implement a class for success responsebody
 //todo:implement enum for responsebody message
-public class TestingUserController {
+public class UserController {
 
     @Autowired
     private UserManagementService userService;

@@ -16,7 +16,7 @@ public interface UserContactSerivce extends BaseUserService{
 
     void makeGroupContact(Long userId, Set<Long> addableUserIds) throws UserNotFoundException, UserAlreadyInContactException, ContactFullException, InsufficientContactMemberException;
 
-    void sendMessage(Long userId, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, IllegalAccessException;
+    void sendMessage(Long userId, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, IllegalAccessException, MessageSendingFailureException;
 
     void leaveContact(Long userId, Long contactId) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, NoContactFound;
 }

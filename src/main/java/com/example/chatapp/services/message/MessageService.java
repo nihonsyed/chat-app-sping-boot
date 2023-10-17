@@ -1,5 +1,6 @@
 package com.example.chatapp.services.message;
 
+import com.example.chatapp.custom.exceptions.MessageSendingFailureException;
 import com.example.chatapp.entities.contacts.Contact;
 import com.example.chatapp.entities.messages.Message;
 import com.example.chatapp.entities.messages.TextMessage;
@@ -11,8 +12,7 @@ public interface MessageService {
 
 
 
-     default void send(Contact contact, User sender, SendingMessageDto messageDto,int typeCode)
-     {
+     default void send(Contact contact, User sender, SendingMessageDto messageDto,int typeCode) throws MessageSendingFailureException {
          if(typeCode==0)
          {
              TextMessage textMessage=new TextMessage();
@@ -33,7 +33,7 @@ public interface MessageService {
      }
 
 
-    void sendTextMessage(TextMessage textMessage);
+    void sendTextMessage(TextMessage textMessage) throws MessageSendingFailureException;
 
      //todo:add more method for doing message operations like deleting,editing etc.
 

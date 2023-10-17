@@ -1,9 +1,10 @@
 package com.example.chatapp.custom.exceptions;
 
+import com.example.chatapp.enums.contact.ContactErrors;
+
 public class ContactNotFound extends Exception{
     public ContactNotFound()
     {
-        //todo:enum
-        super("Contact Not Found!");
+        super(ContactErrors.NOT_FOUND.getDescription());
     }
 }

@@ -15,7 +15,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping(value = "testing/users")
-public class ContactController {
+public class UserContactController {
 
     @Autowired
     private UserContactSerivce userContactSerivce;
@@ -29,7 +29,7 @@ public class ContactController {
 
     @PatchMapping(value = "{id}/contacts/{contactId}/text/send")
     @Operation(summary = "Send a new text message", description = "send a new message to a private or group chat")
-    public ResponseEntity<Object> sendTextMessage(@PathVariable("id") @Schema(example = "1") Long userId, @PathVariable("contactId") @Schema(example = "1") Long contactId, @RequestBody SendingMessageDto newMessage) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, IllegalAccessException {
+    public ResponseEntity<Object> sendTextMessage(@PathVariable("id") @Schema(example = "1") Long userId, @PathVariable("contactId") @Schema(example = "1") Long contactId, @RequestBody SendingMessageDto newMessage) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, IllegalAccessException, MessageSendingFailureException {
         userContactSerivce.sendMessage(userId, contactId, newMessage, 0);
         return new ResponseEntity<>("Message sent successfully!", HttpStatus.CREATED);
     }

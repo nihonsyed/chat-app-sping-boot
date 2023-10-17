@@ -1,12 +1,14 @@
 package com.example.chatapp.custom.exceptions;
 
+import com.example.chatapp.enums.contact.ContactErrors;
+import com.example.chatapp.enums.user.UserContactError;
+
 public class IllegalContactOperation extends Exception {
 
     private String additionalMessage;
 
     public IllegalContactOperation() {
-        //todo:enum
-        super("This operation is not allowed for this contact! ");
+        super(UserContactError.ILLEGAL_OPERATION.getDescription());
     }
 
     public IllegalContactOperation(String additionalMessage) {
