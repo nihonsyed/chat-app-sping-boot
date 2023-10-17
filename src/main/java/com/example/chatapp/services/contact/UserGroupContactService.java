@@ -4,6 +4,7 @@ import com.example.chatapp.custom.exceptions.*;
 import com.example.chatapp.entities.contacts.Contact;
 import com.example.chatapp.entities.contacts.GroupContact;
 import com.example.chatapp.entities.users.User;
+import com.example.chatapp.enums.contact.ContactTypes;
 import com.example.chatapp.models.dto.message.SendingMessageDto;
 import com.example.chatapp.repositories.ContactRepository;
 import com.example.chatapp.repositories.UserRepository;
@@ -64,8 +65,8 @@ public class UserGroupContactService implements UserContactService {
     @Override
     public void addMessage(User user, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, IllegalAccessException, MessageSendingFailureException {
         Contact contact=findById(contactId);
-        //todo:enum
-        if(contact.getMembers().size()<2)
+
+        if(contact.getMembers().size()< ContactTypes.GROUP.getMinMembers())
             throw new MessageSendingFailureException();
 
         messageService.send(contact,user,addableMessageDto,messageTypeCode);

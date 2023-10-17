@@ -5,7 +5,7 @@ import com.example.chatapp.models.dto.message.SendingMessageDto;
 
 import java.util.Set;
 
-public interface TestingUserContactSerivce extends BaseUserService{
+public interface UserContactSerivce extends BaseUserService{
     void makePrivateContact(Long userId, Long addableUserId) throws UserNotFoundException, UserAlreadyInContactException, SameUserException, InsufficientContactMemberException;
 
     void addMember(Long userId, Long addableUserId, Long groupContactId) throws UserNotFoundException, ContactNotFound, UnauthorizedAccessToContactException, UserAlreadyInContactException, IllegalContactOperation, SameUserException, ContactFullException;

@@ -1,12 +1,10 @@
 package com.example.chatapp.services.contact;
 
 
-
 import com.example.chatapp.custom.exceptions.ContactNotFound;
 import com.example.chatapp.custom.exceptions.InsufficientContactMemberException;
 import com.example.chatapp.custom.exceptions.NoContactFound;
 import com.example.chatapp.entities.contacts.Contact;
-import com.example.chatapp.entities.messages.Message;
 import com.example.chatapp.entities.users.User;
 import com.example.chatapp.models.dto.contact.PrivateContactResponseDto;
 import jakarta.validation.constraints.NotNull;
@@ -23,7 +21,7 @@ public interface ContactService {
 
     void deleteById(Long id);
 
-    void addMessageToContactById(Message message, User user, Long contactId) throws ContactNotFound;
+
 
     void setPrivateContactsDefaultNamesForResponse(Long userId, @NotNull Set<Contact> contacts) throws InsufficientContactMemberException;
 

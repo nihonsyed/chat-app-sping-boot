@@ -18,7 +18,7 @@ import java.util.List;
 
 @Service
 @Transactional(rollbackOn = Exception.class)
-public class TestingUserManagementServiceImpl implements TestingUserManagementService {
+public class UserManagementServiceImpl implements UserManagementService {
 
     @Autowired
     private UserRepository repository;

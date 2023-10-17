@@ -16,5 +16,6 @@ public class MessageServiceImpl implements MessageService{
     @Override
     public void sendTextMessage(TextMessage textMessage) {
         repository.save(textMessage);
+
     }
 }

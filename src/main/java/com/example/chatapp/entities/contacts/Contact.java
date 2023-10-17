@@ -1,7 +1,5 @@
 package com.example.chatapp.entities.contacts;
 
-import com.example.chatapp.custom.exceptions.ContactFullException;
-import com.example.chatapp.custom.exceptions.UserAlreadyInContactException;
 import com.example.chatapp.entities.messages.Message;
 import com.example.chatapp.entities.users.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -52,14 +50,7 @@ public abstract class Contact {
         messages.add(message);
     }
 
-    public void addMember(User newMember) throws ContactFullException, UserAlreadyInContactException
-    {
-        if(members.contains(newMember))
-            throw new UserAlreadyInContactException();
-        members.add(newMember);
-        //todo:?? for unicity
-        newMember.getContacts().add(this);
-    }
+
 
     //todo:work with admin
 

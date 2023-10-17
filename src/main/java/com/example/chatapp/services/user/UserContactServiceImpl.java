@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class TestingUserContactServiceImpl implements  TestingUserContactSerivce{
+public class UserContactServiceImpl implements UserContactSerivce {
 
     @Autowired
     private UserRepository repository;

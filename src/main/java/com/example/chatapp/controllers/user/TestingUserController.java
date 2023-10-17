@@ -6,7 +6,7 @@ import com.example.chatapp.custom.exceptions.UserNotFoundException;
 import com.example.chatapp.models.dto.user.UserProfileDto;
 import com.example.chatapp.models.dto.user.UserRequestDto;
 import com.example.chatapp.models.dto.user.UserResponseDto;
-import com.example.chatapp.services.user.TestingUserManagementService;
+import com.example.chatapp.services.user.UserManagementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import java.util.List;
 public class TestingUserController {
 
     @Autowired
-    private TestingUserManagementService userService;
+    private UserManagementService userService;
 
     @PostMapping(value = "/register")
     @Operation(summary = "Register a new user", description = "Creates a new user account.")

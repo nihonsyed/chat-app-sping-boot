@@ -1,10 +1,8 @@
 package com.example.chatapp.controllers.user;
 
 import com.example.chatapp.custom.exceptions.*;
-import com.example.chatapp.models.dto.contact.PrivateContactResponseDto;
 import com.example.chatapp.models.dto.message.SendingMessageDto;
-import com.example.chatapp.services.contact.ContactService;
-import com.example.chatapp.services.user.TestingUserContactSerivce;
+import com.example.chatapp.services.user.UserContactSerivce;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +15,10 @@ import java.util.Set;
 
 @RestController
 @RequestMapping(value = "testing/users")
-public class TestingUserContactController {
+public class ContactController {
 
     @Autowired
-    private TestingUserContactSerivce userContactSerivce;
-
-    @Autowired
-    private ContactService contactService;
+    private UserContactSerivce userContactSerivce;
 
     @PatchMapping(value = "{id}/contacts/private/add/{addableUserId}")
     @Operation(summary = "Make a privte-contact between two users", description = "Adds a new  private-contact to a user")

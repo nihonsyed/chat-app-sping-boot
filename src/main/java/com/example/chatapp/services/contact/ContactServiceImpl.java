@@ -8,6 +8,7 @@ import com.example.chatapp.entities.contacts.Contact;
 import com.example.chatapp.entities.contacts.PrivateContact;
 import com.example.chatapp.entities.messages.Message;
 import com.example.chatapp.entities.users.User;
+import com.example.chatapp.enums.contact.ContactTypes;
 import com.example.chatapp.models.dto.contact.PrivateContactResponseDto;
 import com.example.chatapp.models.dto.message.MessageInContactResponseDto;
 import com.example.chatapp.models.dto.user.PrivateContactMemberDto;
@@ -18,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -50,14 +50,7 @@ public class ContactServiceImpl implements ContactService {
         repository.deleteById(id);
     }
 
-    @Override
-    public void addMessageToContactById(Message message, User user, Long contactId) throws ContactNotFound {
-        Contact contact = findById(contactId);
-        contact.addMessage(message);
-        message.setContact(contact);
-        message.setSender(user);
-        repository.save(contact);
-    }
+
 
 
 
@@ -73,21 +66,15 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public List<Contact> findByType(String type) throws NoContactFound {
-        List<Contact> contacts = findByType(type);
-        if (Objects.isNull(contacts) || contacts.isEmpty())
-            throw new NoContactFound();
-        return contacts;
+        return null;
     }
 
     @Override
     public Contact findPrivateContactByUsers(User user, User searchedUser) throws NoContactFound, ContactNotFound {
-        //todo:enum
-        return findByType("private")
-                .stream()
-                .filter(c -> c.getMembers().containsAll(List.of(user, searchedUser)))
-                .findFirst()
-                .orElseThrow(ContactNotFound::new);
+        return null;
     }
+
+
 
     @Override
     public PrivateContactResponseDto getPrivateContactResponseById(Long userId,Long contactId) throws ContactNotFound {
@@ -115,15 +102,15 @@ public class ContactServiceImpl implements ContactService {
             members.stream().filter(user -> !user.getId().equals(userId)).findFirst().
                     ifPresentOrElse(otherUser -> contact.setName(otherUser.getFirstName()),
                             () -> {
-                                //todo:enum
-                                contact.setName("Chat Participant");
+
+                                contact.setName(ContactTypes.PRIVATE.getAlternativeName());
                             });
 
             //todo:also add last name
         }
         else
-        {   //todo:set group name
-            contact.setName("Group chat");
+        {
+            contact.setName(ContactTypes.GROUP.getAlternativeName());
         }
     }
 

@@ -9,7 +9,7 @@ import com.example.chatapp.models.dto.user.UserResponseDto;
 
 import java.util.List;
 
-public interface TestingUserManagementService extends BaseUserService{
+public interface UserManagementService extends BaseUserService{
     void save(UserRequestDto user);
 
     List<UserResponseDto> findAll() throws NoUserFoundException;

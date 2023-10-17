@@ -2,8 +2,6 @@ package com.example.chatapp.entities.messages;
 
 import com.example.chatapp.entities.contacts.Contact;
 import com.example.chatapp.entities.users.User;
-import com.example.chatapp.models.pojos.message.MessageProcessor;
-import com.example.chatapp.models.pojos.message.Sender;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
