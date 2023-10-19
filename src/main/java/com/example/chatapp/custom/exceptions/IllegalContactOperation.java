@@ -1,14 +1,14 @@
 package com.example.chatapp.custom.exceptions;
 
-import com.example.chatapp.enums.contact.ContactErrors;
 import com.example.chatapp.enums.user.UserContactError;
+import org.springframework.http.HttpStatus;
 
-public class IllegalContactOperation extends Exception {
+public class IllegalContactOperation extends CustomException{
 
     private String additionalMessage;
 
     public IllegalContactOperation() {
-        super(UserContactError.ILLEGAL_OPERATION.getDescription());
+        super(UserContactError.ILLEGAL_OPERATION.getDescription(),403, HttpStatus.FORBIDDEN);
     }
 
     public IllegalContactOperation(String additionalMessage) {

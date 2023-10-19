@@ -1,11 +1,14 @@
 package com.example.chatapp.custom.exceptions;
 
+import org.springframework.http.HttpStatus;
+
 public class CustomNestedException extends CustomException {
+
 
     private final Exception rootException;
 
-    public CustomNestedException(String message, Exception rootException) {
-        super(message, rootException.getCause());
+    public CustomNestedException(String message, Exception rootException,int statusCode, HttpStatus httpStatus) {
+        super(message, rootException.getCause(), statusCode, httpStatus);
         this.rootException = rootException;
     }
 
