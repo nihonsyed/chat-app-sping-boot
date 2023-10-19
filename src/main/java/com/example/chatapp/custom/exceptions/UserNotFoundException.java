@@ -1,11 +1,12 @@
 package com.example.chatapp.custom.exceptions;
 
-public class UserNotFoundException extends Exception{
+import com.example.chatapp.enums.user.UserContactError;
+
+public class UserNotFoundException extends CustomException {
 
     public UserNotFoundException()
     {
-        //todo:implement enum for it
-        super("User couldn't be found!");
+        super(UserContactError.NOT_A_CONTACT_MEMBER.getDescription());
     }
 
 }

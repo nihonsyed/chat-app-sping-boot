@@ -3,6 +3,7 @@ package com.example.chatapp.controllers.user;
 import com.example.chatapp.custom.exceptions.InsufficientContactMemberException;
 import com.example.chatapp.custom.exceptions.NoUserFoundException;
 import com.example.chatapp.custom.exceptions.UserNotFoundException;
+import com.example.chatapp.custom.exceptions.UserSignUpFailedException;
 import com.example.chatapp.models.dto.user.UserProfileDto;
 import com.example.chatapp.models.dto.user.UserRequestDto;
 import com.example.chatapp.models.dto.user.UserResponseDto;
@@ -28,7 +29,7 @@ public class UserController {
 
     @PostMapping(value = "/register")
     @Operation(summary = "Register a new user", description = "Creates a new user account.")
-    public ResponseEntity<Object> save(@RequestBody UserRequestDto user) {
+    public ResponseEntity<Object> save(@RequestBody UserRequestDto user) throws UserSignUpFailedException {
         userService.save(user);
         return new ResponseEntity<>("User registered successfully! ", HttpStatus.CREATED);
     }

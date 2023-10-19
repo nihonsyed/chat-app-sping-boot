@@ -4,28 +4,10 @@ import com.example.chatapp.enums.message.MessageErrors;
 
 import java.util.Objects;
 
-public class MessageSendingFailureException extends Exception{
+public class MessageSendingFailureException extends CustomNestedException{
 
-    private RuntimeException triggererException;
 
-    public MessageSendingFailureException()
-    {
-        super(MessageErrors.SENDING_FAILURE.getDescription());
+    public MessageSendingFailureException( Exception rootException) {
+        super(MessageErrors.SENDING_FAILURE.getDescription(), rootException);
     }
-
-    public MessageSendingFailureException(RuntimeException mainException)
-    {
-        this();
-        this.triggererException =mainException;
-    }
-    @Override
-    public Throwable getCause()
-    {
-        return (Objects.isNull(triggererException))?
-                super.getCause(): triggererException.getCause();
-    }
-
-
-
-
 }

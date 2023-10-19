@@ -11,20 +11,20 @@ import java.util.Set;
 
 public interface UserContactService {
 
-   <T> void  makeContact(User requestingUser, T addableUser) throws InsufficientContactMemberException, UserNotFoundException, UserAlreadyInContactException;
-    void leaveContact(User user, Long contactId) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, NoContactFound;
+   <T> void  makeContact(User requestingUser, T addableUser) throws InsufficientContactMemberException, UserNotFoundException;
+    void leaveContact(User user, Long contactId) throws UserNotFoundException, UserIsNotInContactException, ContactNotFound, NoContactFound;
 
     Contact findById(Long id) throws ContactNotFound;
 
-    void addMessage(User user, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, IllegalAccessException, MessageSendingFailureException;
+    void addMessage(User user, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UserIsNotInContactException, ContactNotFound, IllegalAccessException, MessageSendingFailureException, IllegalContactOperation;
      default  boolean isMember(Set<User> members, User user)
     {
         return members.contains(user);
     }
 
-    default boolean isContactMember(User user, Contact contact) throws UnauthorizedAccessToContactException {
+    default boolean isContactMember(User user, Contact contact) throws UserIsNotInContactException {
 
-        if (!contact.getMembers().contains(user)) throw new UnauthorizedAccessToContactException();
+        if (!contact.getMembers().contains(user)) throw new UserIsNotInContactException();
         return true;
 
     }
@@ -33,15 +33,15 @@ public interface UserContactService {
         throw new IllegalContactOperation();
     }
 
-    default void addMember(User user,  User addableUser, Long groupContactId) throws ContactFullException,UserNotFoundException, ContactNotFound, UnauthorizedAccessToContactException, UserAlreadyInContactException, IllegalContactOperation, SameUserException {
+    default void addMember(User user,  User addableUser, Long groupContactId) throws ContactFullException,UserNotFoundException, ContactNotFound, UserIsNotInContactException,  IllegalContactOperation {
         throw new ContactFullException();
     }
 
-    default void leaveContact(User user, Long contactId, ContactRepository repository) throws ContactNotFound, UnauthorizedAccessToContactException {
+    default void leaveContact(User user, Long contactId, ContactRepository repository) throws ContactNotFound, UserIsNotInContactException {
         Contact contact = repository.findById(contactId).orElseThrow(ContactNotFound::new);
         Set<User> members=contact.getMembers();
         if(!isMember(members,user))
-            throw new UnauthorizedAccessToContactException();
+            throw new UserIsNotInContactException();
         members.remove(user);
         user.getContacts().remove(contact);
 

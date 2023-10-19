@@ -20,7 +20,7 @@ public class MessageServiceImpl implements MessageService{
         try {
                repository.save(textMessage);
         }
-        catch (RuntimeException exception)
+        catch (Exception exception)
         {
             throw new MessageSendingFailureException(exception);
         }

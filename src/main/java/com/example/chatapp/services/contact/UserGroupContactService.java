@@ -5,6 +5,7 @@ import com.example.chatapp.entities.contacts.Contact;
 import com.example.chatapp.entities.contacts.GroupContact;
 import com.example.chatapp.entities.users.User;
 import com.example.chatapp.enums.contact.ContactTypes;
+import com.example.chatapp.enums.user.UserContactError;
 import com.example.chatapp.models.dto.message.SendingMessageDto;
 import com.example.chatapp.repositories.ContactRepository;
 import com.example.chatapp.repositories.UserRepository;
@@ -52,7 +53,7 @@ public class UserGroupContactService implements UserContactService {
     }
 
     @Override
-    public void leaveContact( User user, Long contactId) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, NoContactFound {
+    public void leaveContact( User user, Long contactId) throws UserNotFoundException, UserIsNotInContactException, ContactNotFound, NoContactFound {
 
       leaveContact(user,contactId,repository);
     }
@@ -63,15 +64,15 @@ public class UserGroupContactService implements UserContactService {
     }
 
     @Override
-    public void addMessage(User user, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, IllegalAccessException, MessageSendingFailureException {
+    public void addMessage(User user, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UserIsNotInContactException, ContactNotFound, IllegalAccessException, MessageSendingFailureException, IllegalContactOperation {
         Contact contact=findById(contactId);
 
         if(contact.getMembers().size()< ContactTypes.GROUP.getMinMembers())
-            throw new MessageSendingFailureException();
+            throw new IllegalContactOperation();
 
         messageService.send(contact,user,addableMessageDto,messageTypeCode);
     }
-   public void makeAdmin(User user, User newAdmin, Long groupContactId) throws UserNotFoundException, ContactNotFound, UnauthorizedAccessToContactException, IllegalContactOperation, UserAlreadyAdminInGroupContactException, SameUserException
+   public void makeAdmin(User user, User newAdmin, Long groupContactId) throws UserNotFoundException, ContactNotFound, UserIsNotInContactException, IllegalContactOperation
     {
         Contact contact =findById(groupContactId);
         if (!(contact instanceof GroupContact)) throw new IllegalContactOperation();
@@ -79,7 +80,7 @@ public class UserGroupContactService implements UserContactService {
         if (isAdmin(user, (GroupContact) contact) && isContactMember(user, contact) && isContactMember(newAdmin,contact)) {
             Set<User> admins=((GroupContact) contact).getAdmins();
             if (admins.contains(newAdmin))
-                throw new UserAlreadyAdminInGroupContactException();
+                throw new ContactOperationFailedException(UserContactError.ALREADY_ADMIN.getDescription());
             else
               { admins.add(newAdmin);
                 repository.save(contact);}
@@ -87,14 +88,14 @@ public class UserGroupContactService implements UserContactService {
         }
     }
 
-    public void addMember( User user,  User addableUser, Long groupContactId) throws UserNotFoundException, ContactNotFound, UnauthorizedAccessToContactException, UserAlreadyInContactException, IllegalContactOperation, SameUserException {
+    public void addMember( User user,  User addableUser, Long groupContactId) throws UserNotFoundException, ContactNotFound, UserIsNotInContactException, IllegalContactOperation {
 
         Contact contact = findById(groupContactId);
         if (!(contact instanceof GroupContact)) throw new IllegalContactOperation();
         if (isAdmin(user, (GroupContact) contact) && isContactMember(user, contact)) {
             Set<User> members=contact.getMembers();
             if(members.contains(addableUser))
-                throw new UserAlreadyInContactException();
+                throw new ContactOperationFailedException(UserContactError.ALREADY_CONTACT_MEMBER.getDescription());
             members.add(addableUser);
             addableUser.getContacts().add(contact);
             repository.save(contact);
@@ -102,7 +103,7 @@ public class UserGroupContactService implements UserContactService {
 
     }
 
-    public void removeMember(User user, User removeableUser, Long groupContactId) throws UserNotFoundException, ContactNotFound, ContactFullException, IllegalContactOperation, UnauthorizedAccessToContactException, UserNotFoundInContactException {
+    public void removeMember(User user, User removeableUser, Long groupContactId) throws UserNotFoundException, ContactNotFound, ContactFullException, IllegalContactOperation, UserIsNotInContactException {
 
         Contact contact = findById(groupContactId);
         if (!(contact instanceof GroupContact)) throw new IllegalContactOperation();
@@ -111,7 +112,7 @@ public class UserGroupContactService implements UserContactService {
             ((GroupContact) contact).getAdmins().remove(removeableUser);
             Set<User> members= contact.getMembers();
             if(!members.contains(removeableUser))
-                throw new UserNotFoundInContactException();
+                throw new UserIsNotInContactException();
 
             members.remove(removeableUser);
             removeableUser.getContacts().remove(contact);

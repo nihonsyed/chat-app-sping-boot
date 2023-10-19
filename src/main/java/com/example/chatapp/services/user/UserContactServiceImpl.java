@@ -2,6 +2,7 @@ package com.example.chatapp.services.user;
 
 import com.example.chatapp.custom.exceptions.*;
 import com.example.chatapp.entities.users.User;
+import com.example.chatapp.enums.user.UserContactError;
 import com.example.chatapp.models.dto.message.SendingMessageDto;
 import com.example.chatapp.repositories.UserRepository;
 import com.example.chatapp.services.contact.UserGroupContactService;
@@ -25,16 +26,16 @@ public class UserContactServiceImpl implements UserContactSerivce {
     private UserGroupContactService groupContactService;
 
     @Override
-    public void makePrivateContact(Long requestingUsersId, Long addableUserId) throws UserNotFoundException, UserAlreadyInContactException, SameUserException, InsufficientContactMemberException {
-        if (requestingUsersId.equals(addableUserId)) throw new SameUserException();
+    public void makePrivateContact(Long requestingUsersId, Long addableUserId) throws UserNotFoundException,  InsufficientContactMemberException, IllegalContactOperation {
+        if (requestingUsersId.equals(addableUserId)) throw new IllegalContactOperation(UserContactError.SELF_CONTACT.getDescription());
         User user = getById(repository,requestingUsersId);
         User addableUser = getById(repository,addableUserId);
         privateContactService.makeContact(user,addableUser);
     }
 
     @Override
-    public void addMember(Long userId, Long addableUserId, Long groupContactId) throws UserNotFoundException, ContactNotFound, UnauthorizedAccessToContactException, UserAlreadyInContactException, IllegalContactOperation, SameUserException{
-        if(userId.equals(addableUserId)) throw new SameUserException();
+    public void addMember(Long userId, Long addableUserId, Long groupContactId) throws UserNotFoundException, ContactNotFound, UserIsNotInContactException, IllegalContactOperation{
+        if(userId.equals(addableUserId)) throw new IllegalContactOperation(UserContactError.SELF_ADDITION.getDescription());
         User user = getById(repository,userId);
         User addableUser = getById(repository,addableUserId);
         groupContactService.addMember(user,addableUser,groupContactId);
@@ -42,8 +43,8 @@ public class UserContactServiceImpl implements UserContactSerivce {
     }
 
     @Override
-    public void makeAdmin(Long userId, Long newAdminId, Long groupContactId) throws UserNotFoundException, ContactNotFound, UnauthorizedAccessToContactException, IllegalContactOperation, UserAlreadyAdminInGroupContactException, SameUserException {
-        if(userId.equals(newAdminId)) throw new SameUserException();
+    public void makeAdmin(Long userId, Long newAdminId, Long groupContactId) throws UserNotFoundException, ContactNotFound, UserIsNotInContactException, IllegalContactOperation {
+        if(userId.equals(newAdminId)) throw new IllegalContactOperation(UserContactError.SELF_ADMIN_ASSIGNMENT.getDescription());
         User user = getById(repository,userId);
         User newAdmin = getById(repository,newAdminId);
         groupContactService.makeAdmin(user,newAdmin,groupContactId);
@@ -52,7 +53,7 @@ public class UserContactServiceImpl implements UserContactSerivce {
     }
 
     @Override
-    public void removeMember(Long userId, Long removeableUserId, Long groupContactId) throws UserNotFoundException, ContactNotFound, ContactFullException, IllegalContactOperation, UnauthorizedAccessToContactException, UserNotFoundInContactException {
+    public void removeMember(Long userId, Long removeableUserId, Long groupContactId) throws UserNotFoundException, ContactNotFound, ContactFullException, IllegalContactOperation, UserIsNotInContactException {
         User user = getById(repository,userId);
         User removeableUser = getById(repository,removeableUserId);
         groupContactService.removeMember(user,removeableUser,groupContactId);
@@ -75,7 +76,7 @@ public class UserContactServiceImpl implements UserContactSerivce {
     }
 
     @Override
-    public void sendMessage(Long userId, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, IllegalAccessException, MessageSendingFailureException {
+    public void sendMessage(Long userId, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UserIsNotInContactException, ContactNotFound, IllegalAccessException, MessageSendingFailureException {
 
         User user = getById(repository,userId);
         privateContactService.addMessage(user,contactId,addableMessageDto,messageTypeCode);
@@ -84,7 +85,7 @@ public class UserContactServiceImpl implements UserContactSerivce {
     }
 
     @Override
-    public void leaveContact(Long userId, Long contactId) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, NoContactFound {
+    public void leaveContact(Long userId, Long contactId) throws UserNotFoundException, UserIsNotInContactException, ContactNotFound, NoContactFound {
 
         User user = getById(repository,userId);
         groupContactService.leaveContact(user,contactId);

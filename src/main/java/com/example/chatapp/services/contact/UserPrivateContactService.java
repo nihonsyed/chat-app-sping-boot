@@ -4,6 +4,7 @@ import com.example.chatapp.custom.exceptions.*;
 import com.example.chatapp.entities.contacts.Contact;
 import com.example.chatapp.entities.contacts.PrivateContact;
 import com.example.chatapp.entities.users.User;
+import com.example.chatapp.enums.user.UserContactError;
 import com.example.chatapp.models.dto.message.SendingMessageDto;
 import com.example.chatapp.repositories.ContactRepository;
 import com.example.chatapp.services.message.MessageService;
@@ -21,13 +22,13 @@ public class UserPrivateContactService implements UserContactService {
 
 
     @Override
-    public <T> void makeContact(User requestingUser, T addableUser) throws InsufficientContactMemberException, UserNotFoundException, UserAlreadyInContactException {
+    public <T> void makeContact(User requestingUser, T addableUser) throws InsufficientContactMemberException, UserNotFoundException {
         if(addableUser instanceof User)
         {
             User addingUser=(User) addableUser;
 
             if(hasContact(requestingUser,addingUser))
-             throw  new UserAlreadyInContactException();
+             throw  new ContactOperationFailedException(UserContactError.ALREADY_CONTACT_MEMBER.getDescription());
 
             else
             {
@@ -46,7 +47,7 @@ public class UserPrivateContactService implements UserContactService {
 
 
     @Override
-    public void leaveContact(User user, Long contactId) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, NoContactFound {
+    public void leaveContact(User user, Long contactId) throws UserNotFoundException, UserIsNotInContactException, ContactNotFound, NoContactFound {
 
         leaveContact(user,contactId,repository);
     }
@@ -57,10 +58,10 @@ public class UserPrivateContactService implements UserContactService {
     }
 
     @Override
-    public void addMessage(User user, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UnauthorizedAccessToContactException, ContactNotFound, IllegalAccessException, MessageSendingFailureException {
+    public void addMessage(User user, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UserIsNotInContactException, ContactNotFound, IllegalAccessException, MessageSendingFailureException {
         Contact contact=findById(contactId);
         if(!contact.getMembers().contains(user))
-            throw  new UnauthorizedAccessToContactException();
+            throw  new UserIsNotInContactException();
         messageService.send(contact,user,addableMessageDto,messageTypeCode);
     }
 
