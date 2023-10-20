@@ -53,7 +53,7 @@ public class UserContactController {
 
     @PatchMapping(value = "{id}/contacts/group/add")
     @Operation(summary = "Make a new group contact", description = "a group contact")
-    public ResponseEntity<Object> makeGroupContact(@PathVariable("id") @Schema(example = "1") Long requestingUserId, @RequestBody Set<Long> addableUserIds) throws UserNotFoundException, InsufficientContactMemberException, ContactFullException {
+    public ResponseEntity<Object> makeGroupContact(@PathVariable("id") @Schema(example = "1") Long requestingUserId, @RequestBody Set<Long> addableUserIds) throws UserNotFoundException, InsufficientContactMemberException {
         userContactSerivce.makeGroupContact(requestingUserId, addableUserIds);
         return new ResponseEntity<>("Group has successfully been made " + requestingUserId, HttpStatus.OK);
     }
@@ -74,7 +74,7 @@ public class UserContactController {
 
     @PatchMapping("/{userId}/contacts/group/remove/{removeableUserId}/{groupContactId}")
     @Operation(summary = "Remove a user from a group contact", description = "Remove a user from the group contact")
-    public ResponseEntity<Object> removeFromGroupContact(@PathVariable("userId") @Schema(example = "3", description = "client id") Long userId, @PathVariable("removeableUserId") @Schema(example = "4") Long removeableUserId, @PathVariable("groupContactId") @Schema(example = "5") Long groupContactId) throws UserNotFoundException, ContactNotFound, ContactFullException, IllegalContactOperation, UserIsNotInContactException {
+    public ResponseEntity<Object> removeFromGroupContact(@PathVariable("userId") @Schema(example = "3", description = "client id") Long userId, @PathVariable("removeableUserId") @Schema(example = "4") Long removeableUserId, @PathVariable("groupContactId") @Schema(example = "5") Long groupContactId) throws UserNotFoundException, ContactNotFound,  IllegalContactOperation, UserIsNotInContactException {
         userContactSerivce.removeMember(userId, removeableUserId, groupContactId);
         return new ResponseEntity<>("User removed from the group contact successfully!", HttpStatus.OK);
     }

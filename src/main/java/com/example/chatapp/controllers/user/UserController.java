@@ -1,5 +1,6 @@
 package com.example.chatapp.controllers.user;
 
+import com.example.chatapp.custom.api.response.PayloadContainingResponseBody;
 import com.example.chatapp.custom.exceptions.InsufficientContactMemberException;
 import com.example.chatapp.custom.exceptions.NoUserFoundException;
 import com.example.chatapp.custom.exceptions.UserNotFoundException;
@@ -38,7 +39,8 @@ public class UserController {
     @Operation(summary = "Get all users", description = "Retrieves a list of all registered users.")
     public ResponseEntity<Object> findAll() throws NoUserFoundException {
         List<UserResponseDto> users = userService.findAll();
-        return ResponseEntity.ok(users);
+        PayloadContainingResponseBody responseBody=new PayloadContainingResponseBody("",200,users);
+        return ResponseEntity.ok(responseBody);
     }
 
     @GetMapping(value = "/{id}")

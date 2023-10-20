@@ -11,6 +11,7 @@ import com.example.chatapp.repositories.ContactRepository;
 import com.example.chatapp.repositories.UserRepository;
 import com.example.chatapp.services.message.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -103,7 +104,7 @@ public class UserGroupContactService implements UserContactService {
 
     }
 
-    public void removeMember(User user, User removeableUser, Long groupContactId) throws UserNotFoundException, ContactNotFound, ContactFullException, IllegalContactOperation, UserIsNotInContactException {
+    public void removeMember(User user, User removeableUser, Long groupContactId) throws UserNotFoundException, ContactNotFound,  IllegalContactOperation, UserIsNotInContactException {
 
         Contact contact = findById(groupContactId);
         if (!(contact instanceof GroupContact)) throw new IllegalContactOperation();
@@ -112,7 +113,7 @@ public class UserGroupContactService implements UserContactService {
             ((GroupContact) contact).getAdmins().remove(removeableUser);
             Set<User> members= contact.getMembers();
             if(!members.contains(removeableUser))
-                throw new UserIsNotInContactException();
+                throw new UserIsNotInContactException(404, HttpStatus.NOT_FOUND);
 
             members.remove(removeableUser);
             removeableUser.getContacts().remove(contact);

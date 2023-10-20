@@ -53,7 +53,7 @@ public class UserContactServiceImpl implements UserContactSerivce {
     }
 
     @Override
-    public void removeMember(Long userId, Long removeableUserId, Long groupContactId) throws UserNotFoundException, ContactNotFound, ContactFullException, IllegalContactOperation, UserIsNotInContactException {
+    public void removeMember(Long userId, Long removeableUserId, Long groupContactId) throws UserNotFoundException, ContactNotFound,  IllegalContactOperation, UserIsNotInContactException {
         User user = getById(repository,userId);
         User removeableUser = getById(repository,removeableUserId);
         groupContactService.removeMember(user,removeableUser,groupContactId);

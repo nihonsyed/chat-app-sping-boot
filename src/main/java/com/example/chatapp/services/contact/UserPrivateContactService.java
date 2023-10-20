@@ -9,6 +9,7 @@ import com.example.chatapp.models.dto.message.SendingMessageDto;
 import com.example.chatapp.repositories.ContactRepository;
 import com.example.chatapp.services.message.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service("private")
@@ -61,7 +62,7 @@ public class UserPrivateContactService implements UserContactService {
     public void addMessage(User user, Long contactId, SendingMessageDto addableMessageDto, int messageTypeCode) throws UserNotFoundException, UserIsNotInContactException, ContactNotFound, IllegalAccessException, MessageSendingFailureException {
         Contact contact=findById(contactId);
         if(!contact.getMembers().contains(user))
-            throw  new UserIsNotInContactException();
+            throw  new UserIsNotInContactException(403, HttpStatus.FORBIDDEN);
         messageService.send(contact,user,addableMessageDto,messageTypeCode);
     }
 

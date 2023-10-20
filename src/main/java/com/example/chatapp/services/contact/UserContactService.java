@@ -4,8 +4,10 @@ import com.example.chatapp.custom.exceptions.*;
 import com.example.chatapp.entities.contacts.Contact;
 import com.example.chatapp.entities.contacts.GroupContact;
 import com.example.chatapp.entities.users.User;
+import com.example.chatapp.enums.user.UserContactError;
 import com.example.chatapp.models.dto.message.SendingMessageDto;
 import com.example.chatapp.repositories.ContactRepository;
+import org.springframework.http.HttpStatus;
 
 import java.util.Set;
 
@@ -24,7 +26,7 @@ public interface UserContactService {
 
     default boolean isContactMember(User user, Contact contact) throws UserIsNotInContactException {
 
-        if (!contact.getMembers().contains(user)) throw new UserIsNotInContactException();
+        if (!contact.getMembers().contains(user)) throw new UserIsNotInContactException(403, HttpStatus.FORBIDDEN);
         return true;
 
     }
@@ -33,15 +35,15 @@ public interface UserContactService {
         throw new IllegalContactOperation();
     }
 
-    default void addMember(User user,  User addableUser, Long groupContactId) throws ContactFullException,UserNotFoundException, ContactNotFound, UserIsNotInContactException,  IllegalContactOperation {
-        throw new ContactFullException();
+    default void addMember(User user,  User addableUser, Long groupContactId) throws UserNotFoundException, ContactNotFound, UserIsNotInContactException,  IllegalContactOperation {
+        throw new IllegalContactOperation(UserContactError.ILLEGAL_OPERATION.getDescription());
     }
 
     default void leaveContact(User user, Long contactId, ContactRepository repository) throws ContactNotFound, UserIsNotInContactException {
         Contact contact = repository.findById(contactId).orElseThrow(ContactNotFound::new);
         Set<User> members=contact.getMembers();
         if(!isMember(members,user))
-            throw new UserIsNotInContactException();
+            throw new UserIsNotInContactException(404,HttpStatus.NOT_FOUND);
         members.remove(user);
         user.getContacts().remove(contact);
 
